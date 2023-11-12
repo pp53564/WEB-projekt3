@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>WEB-project3</title>
+</head>
+
+<body>
+    <audio id="collisionSound" src="collision.mp3"></audio>
+    <div id="timer" style="position: absolute; top: 10px; right: 10px; color: white; font-size: 20px;"></div>
+    <canvas id="myCanvas"
+        style="border: 8px solid rgb(255, 255, 255); display: block; box-sizing: border-box; width: 100%; height: 100%;"></canvas>
+    <img id="asteroidImage" className="asteroidImage" src="asteroid.png" style="display:none;">
+    <img id="rocketImage" className="rocketImage" src="rocket.png" style="display:none;">
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);"></div>
+    <div id="gameOver" style="display: none; color: white; font-size: 30px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        Game Over
+        <div id="finalTime" style="font-size: 20px; margin-top: 10px;"></div>
+        <button id="restartButton" style="display: none;">Restart</button>
+        <div id="bestTime" style="font-size: 20px; margin-top: 10px;"></div>
+
+    </div>
+   
+    <script src="script.js"></script>
+</body>
+
+</html>

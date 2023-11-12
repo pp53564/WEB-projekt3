@@ -1,0 +1,31 @@
+   body,
+   html {
+       margin: 0;
+       overflow: hidden;
+   }
+
+   canvas {
+       display: block;
+       background-color: black;
+   }
+
+   .asteroidImage {
+       width: 2px;
+       height: 2px;
+       position: absolute;
+   }
+
+   .rocketImage {
+       width: 2px;
+       height: 2px;
+       position: absolute;
+   }
+   #restartButton {
+    position: absolute;
+    top: 130px;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
