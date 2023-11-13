@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var collision;
 
 
+
     function getBestTime() {
         return localStorage.getItem(localStorageKey);
     }
@@ -64,12 +65,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Dodaj event listener za tipkovnicu
     document.addEventListener("keydown", function (event) {
+        if (restartButton.style.display == "block") {
+            return;
+        }
         if (!startTime) {
+
             // Ako igra još nije počela, postavi vrijeme početka
             startTime = Date.now();
             gameOverElement.style.display = "none"; // Sakrij poruku "Game Over"
             overlayElement.style.display = "none";
+
         }
+
 
         switch (event.key) {
             case "ArrowUp":
@@ -348,6 +355,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     restartButton.style.display = "block";
 
 
+
                 }
             }
 
@@ -357,6 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
     restartButton.addEventListener("click", function () {
         // Ponovno učitaj stranicu
         window.location.reload();
+
     });
 
 
