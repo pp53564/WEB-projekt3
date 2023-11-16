@@ -1,6 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Dohvaćanje canvas elementa i njegovog 2D konteksta
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
+
+    // Postavi veličinu Canvasa na veličinu prozora preglednika
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+
+
+    // Postavi boju pozadine na crnu
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+
+    // dohvaćanje html-a za prikaz vremena, div-a "Game Over", konačnog vremena,
+    //zvuka sudara, najboljeg vremena i gumba za ponovno pokretanje, overlaya- zatamljenje pozadine
     var timerElement = document.getElementById("timer");
     var gameOverElement = document.getElementById("gameOver");
     var finalTimeElement = document.getElementById("finalTime");
@@ -11,45 +25,21 @@ document.addEventListener("DOMContentLoaded", function () {
     var localStorageKey = "bestTime";
     var collision;
 
-
-
-    function getBestTime() {
-        return localStorage.getItem(localStorageKey);
-    }
-
-    // Funkcija za postavljanje najboljeg vremena u lokalno pohranjivanje
+    // Funkcija za postavljanje najboljeg vremena u local storage
     function setBestTime(time) {
         localStorage.setItem(localStorageKey, time);
     }
 
 
-
-    // Funkcija za prikaz najboljeg vremena
-    function displayBestTime() {
-        var bestTime = getBestTime();
-        if (bestTime) {
-            bestTimeElement.textContent = "Best Time: " + bestTime;
-        }
-    }
-
-
-
-    // Postavi veličinu Canvasa na veličinu prozora preglednika
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
-
-    // Postavi boju pozadine na crnu
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, c.width, c.height);
-
+    //dohvaćanje div elemenata sa slikama
     var img = document.getElementById("asteroidImage");
     var rocketImage = document.getElementById("rocketImage");
 
     var player = {
-        x: (c.width - 100) / 2, // Početna x pozicija rakete
+        x: (c.width - 100) / 2,  // Početna x pozicija rakete
         y: (c.height - 100) / 2, // Početna y pozicija rakete
-        speed: 5, // Brzina kretanja rakete
-        rotation: 0, // Početni kut rotacije
+        speed: 5,                // Brzina kretanja rakete
+        rotation: 0,             // Početni kut rotacije
     };
 
     var startTime; // Vrijeme početka igre
@@ -57,27 +47,27 @@ document.addEventListener("DOMContentLoaded", function () {
     // Funkcija za crtanje rakete
     function drawPlayer(x, y, rotation) {
         ctx.save();
-        ctx.translate(x + 40, y + 60); // Postavi središte rotacije na sredinu rakete
-        ctx.rotate(rotation); // Rotiraj prema kutu rotacije
+        ctx.translate(x + 40, y + 60);                  // Postavi središte rotacije na sredinu rakete
+        ctx.rotate(rotation);                          // Rotiraj prema kutu rotacije
         ctx.drawImage(rocketImage, -40, -60, 50, 90); // Centriraj sliku rakete
         ctx.restore();
     }
 
     // Dodaj event listener za tipkovnicu
     document.addEventListener("keydown", function (event) {
+        // Ako je game over onemogući pokretanje tipkama, samo klikom na gumb restart
         if (restartButton.style.display == "block") {
             return;
         }
         if (!startTime) {
-
             // Ako igra još nije počela, postavi vrijeme početka
             startTime = Date.now();
             gameOverElement.style.display = "none"; // Sakrij poruku "Game Over"
-            overlayElement.style.display = "none";
+            overlayElement.style.display = "none";  // Ne prikazuj zatamljenu pozadinu
 
         }
 
-
+        // Kreatnje rakete pomoću tipki, i rotacija u odredenom smjeru
         switch (event.key) {
             case "ArrowUp":
                 player.y -= player.speed;
@@ -116,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Generiraj slučajne asteroide izvan ekrana
+    // Generiranje slučajnih asteroida izvan ekrana
     var asteroids = [];
     var numAsteroids = 10; // Broj asteroida koji će se generirati
 
@@ -266,10 +256,10 @@ document.addEventListener("DOMContentLoaded", function () {
             timerElement.textContent = formatTime(minutes, seconds, milliseconds);
 
             if (gameOver) {
-                var currentTime = elapsedTime; // Use elapsedTime directly
+                var currentTime = elapsedTime;
                 var bestTime = parseFloat(localStorage.getItem("bestTime"));
 
-                // Update best time if it's not set or the current time is better
+                // Promijeni najbolje vrijeme, ako nije do sad uneseno ili je trenutno bolje od najboljeg
                 if (collision) {
                     if (!bestTime || currentTime > bestTime) {
                         setBestTime(currentTime);
@@ -277,22 +267,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     collision = false;
                 }
 
-
-                // Format and display current time
+                // Formatiranje i prikazivanje trenutnog vremena
                 var currentMinutes = Math.floor(currentTime / (60 * 1000));
                 var currentSeconds = Math.floor((currentTime % (60 * 1000)) / 1000);
                 var currentMilliseconds = currentTime % 1000;
                 finalTimeElement.textContent = "Your Time: " + formatTime(currentMinutes, currentSeconds, currentMilliseconds);
                 finalTimeElement.style.display = "block";
 
-
-                // Format and display best time
+                // Formatiranje i prikazivanje najboljeg vremena
                 var bestMinutes = Math.floor(parseFloat(localStorage.getItem("bestTime")) / (60 * 1000));
                 var bestSeconds = Math.floor((parseFloat(localStorage.getItem("bestTime")) % (60 * 1000)) / 1000);
                 var bestMilliseconds = parseFloat(localStorage.getItem("bestTime")) % 1000;
                 bestTimeElement.textContent = "Best Time: " + formatTime(bestMinutes, bestSeconds, bestMilliseconds);
                 bestTimeElement.style.display = "block";
-
             }
 
         }
@@ -316,9 +303,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return str;
     }
     function playCollisionSound() {
-        // Check if the sound element is loaded
+        // Ako postoji zvuk
         if (collisionSound) {
-            // Play the sound
+            // Pusti zvuk sudara
             collisionSound.play();
         }
     }
@@ -351,8 +338,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     startTime = null; // Resetiraj vrijeme
                     gameOverElement.style.display = "block"; // Prikazi poruku "Game Over"
-                    overlayElement.style.display = "block";
-                    restartButton.style.display = "block";
+                    overlayElement.style.display = "block"; // Zatamni pozadinu
+                    restartButton.style.display = "block";  // Dodaj gumb restart
 
 
 
@@ -367,9 +354,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.reload();
 
     });
-
-
-
     // Pokreni generiranje zvijezda
     generateStars();
 
