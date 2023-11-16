@@ -38,14 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var player = {
         x: (c.width - 100) / 2,  // Početna x pozicija rakete
         y: (c.height - 100) / 2, // Početna y pozicija rakete
-        speed: 5,                // Brzina kretanja rakete
+        speed: 7,                // Brzina kretanja rakete
         rotation: 0,             // Početni kut rotacije
     };
 
-    var startTime; // Vrijeme početka igre
+    var startGameTimer; // Vrijeme početka igre
 
     // Funkcija za crtanje rakete
-    function drawPlayer(x, y, rotation) {
+    function makeRocket(x, y, rotation) {
         ctx.save();
         ctx.translate(x + 40, y + 60);                  // Postavi središte rotacije na sredinu rakete
         ctx.rotate(rotation);                          // Rotiraj prema kutu rotacije
@@ -59,9 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (restartButton.style.display == "block") {
             return;
         }
-        if (!startTime) {
+        if (!startGameTimer) {
             // Ako igra još nije počela, postavi vrijeme početka
-            startTime = Date.now();
+            startGameTimer = Date.now();
             gameOverElement.style.display = "none"; // Sakrij poruku "Game Over"
             overlayElement.style.display = "none";  // Ne prikazuj zatamljenu pozadinu
 
@@ -88,11 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Provjeri jesu li koordinate igrača izvan granica Canvasa
-        checkPlayerBounds();
+        checkBounds();
     });
 
     // Funkcija za provjeru granica igrača i pomicanje na suprotnu stranu ako je potrebno
-    function checkPlayerBounds() {
+    function checkBounds() {
         if (player.x > c.width) {
             player.x = 0; // Vrati igrača na lijevu stranu ekrana
         } else if (player.x < 0) {
@@ -113,7 +113,11 @@ document.addEventListener("DOMContentLoaded", function () {
     for (var i = 0; i < numAsteroids; i++) {
         var side = Math.floor(Math.random() * 4); // Odaberi stranu (0, 1, 2 ili 3)
         var x, y, speedX, speedY;
+        movingOfAsteroids(side, x, y, speedX, speedY);
+        asteroids.push({ x: x, y: y, speedX: speedX, speedY: speedY });
+    }
 
+    function movingOfAsteroids(side) {
         switch (side) {
             case 0: // Gornja strana
                 x = Math.random() * c.width;
@@ -140,49 +144,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 speedY = (Math.random() - 0.5) * 2;
                 break;
         }
-
-        asteroids.push({ x: x, y: y, speedX: speedX, speedY: speedY });
     }
 
     setInterval(function () {
         for (var i = 0; i < 2; i++) {
             var side = Math.floor(Math.random() * 4);
             var x, y, speedX, speedY;
-
-            switch (side) {
-                case 0: // Gornja strana
-                    x = Math.random() * c.width;
-                    y = -80;
-                    speedX = (Math.random() - 0.5) * 2;
-                    speedY = Math.random() * 2 + 1;
-                    break;
-                case 1: // Desna strana
-                    x = c.width + 80;
-                    y = Math.random() * c.height;
-                    speedX = -Math.random() * 2 - 1;
-                    speedY = (Math.random() - 0.5) * 2;
-                    break;
-                case 2: // Donja strana
-                    x = Math.random() * c.width;
-                    y = c.height + 80;
-                    speedX = (Math.random() - 0.5) * 2;
-                    speedY = -Math.random() * 2 - 1;
-                    break;
-                case 3: // Lijeva strana
-                    x = -80;
-                    y = Math.random() * c.height;
-                    speedX = Math.random() * 2 + 1;
-                    speedY = (Math.random() - 0.5) * 2;
-                    break;
-            }
-
+            movingOfAsteroids(side, x, y, speedX, speedY);
             asteroids.push({ x: x, y: y, speedX: speedX, speedY: speedY });
         }
     }, 5000);
 
 
     // Funkcija za crtanje asteroida
-    function drawAsteroid(x, y) {
+    function makeAsteroid(x, y) {
         ctx.drawImage(img, x, y, 80, 80);
     }
 
@@ -204,19 +179,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Funkcija za crtanje svih objekata (asteroida i rakete)
-    function drawAllObjects() {
+    function makeObjects() {
         asteroids.forEach(function (asteroid) {
-            drawAsteroid(asteroid.x, asteroid.y);
+            makeAsteroid(asteroid.x, asteroid.y);
         });
 
         // Crtanje rakete
-        drawPlayer(player.x, player.y, player.rotation);
+        makeRocket(player.x, player.y, player.rotation);
     }
 
     var stars = []; // Polje koje će sadržavati informacije o zvijezdama
 
     // Funkcija za generiranje zvijezda
-    function generateStars() {
+    function makeStars() {
         for (var i = 0; i < 100; i++) {
             stars.push({
                 x: Math.random() * c.width,
@@ -247,9 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateTimer() {
-        if (startTime) {
+        if (startGameTimer) {
             var currentTime = Date.now();
-            var elapsedTime = currentTime - startTime;
+            var elapsedTime = currentTime - startGameTimer;
             var minutes = Math.floor(elapsedTime / (60 * 1000));
             var seconds = Math.floor((elapsedTime % (60 * 1000)) / 1000);
             var milliseconds = elapsedTime % 1000;
@@ -336,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (gameOverElement.style.display == "none") {
                         playCollisionSound();
                     }
-                    startTime = null; // Resetiraj vrijeme
+                    startGameTimer = null; // Resetiraj vrijeme
                     gameOverElement.style.display = "block"; // Prikazi poruku "Game Over"
                     overlayElement.style.display = "block"; // Zatamni pozadinu
                     restartButton.style.display = "block";  // Dodaj gumb restart
@@ -355,7 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
     // Pokreni generiranje zvijezda
-    generateStars();
+    makeStars();
 
     // Pokreni ažuriranje
     function update() {
@@ -364,9 +339,9 @@ document.addEventListener("DOMContentLoaded", function () {
         drawStars();
         animateStars();
         moveAsteroids();
-        checkPlayerBounds();
+        checkBounds();
         checkCollisions(); // Dodano: provjeri kolizije
-        drawAllObjects();
+        makeObjects();
         updateTimer();
         requestAnimationFrame(update);
 
