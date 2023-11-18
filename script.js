@@ -66,25 +66,19 @@ document.addEventListener("DOMContentLoaded", function () {
             overlayElement.style.display = "none";  // Ne prikazuj zatamljenu pozadinu
 
         }
-
         // Kreatnje rakete pomoću tipki, i rotacija u odredenom smjeru
-        switch (event.key) {
-            case "ArrowUp":
-                player.y -= player.speed;
-                player.rotation = 0;
-                break;
-            case "ArrowDown":
-                player.y += player.speed;
-                player.rotation = Math.PI; // Rotiraj za 180 stupnjeva
-                break;
-            case "ArrowLeft":
-                player.x -= player.speed;
-                player.rotation = -Math.PI / 2; // Rotiraj za 90 stupnjeva u smjeru suprotnom kazaljki na satu
-                break;
-            case "ArrowRight":
-                player.x += player.speed;
-                player.rotation = Math.PI / 2; // Rotiraj za 90 stupnjeva u smjeru kazaljke na satu
-                break;
+        if (event.key === "ArrowUp") {
+            player.y -= player.speed;
+            player.rotation = 0;
+        } else if (event.key === "ArrowDown") {
+            player.y += player.speed;
+            player.rotation = Math.PI; // Rotiraj za 180 stupnjeva
+        } else if (event.key === "ArrowLeft") {
+            player.x -= player.speed;
+            player.rotation = -Math.PI / 2; // Rotiraj za 90 stupnjeva u smjeru suprotnom kazaljki na satu
+        } else if (event.key === "ArrowRight") {
+            player.x += player.speed;
+            player.rotation = Math.PI / 2; // Rotiraj za 90 stupnjeva u smjeru kazaljke na satu
         }
 
         // Provjeri jesu li koordinate igrača izvan granica Canvasa
@@ -118,31 +112,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function movingOfAsteroids(side) {
-        switch (side) {
-            case 0: // Gornja strana
-                x = Math.random() * c.width;
-                y = -80;
-                speedX = (Math.random() - 0.5) * 2;
-                speedY = Math.random() * 2 + 1;
-                break;
-            case 1: // Desna strana
-                x = c.width + 80;
-                y = Math.random() * c.height;
-                speedX = -Math.random() * 2 - 1;
-                speedY = (Math.random() - 0.5) * 2;
-                break;
-            case 2: // Donja strana
-                x = Math.random() * c.width;
-                y = c.height + 80;
-                speedX = (Math.random() - 0.5) * 2;
-                speedY = -Math.random() * 2 - 1;
-                break;
-            case 3: // Lijeva strana
-                x = -80;
-                y = Math.random() * c.height;
-                speedX = Math.random() * 2 + 1;
-                speedY = (Math.random() - 0.5) * 2;
-                break;
+        if (side === 0) { // Gornja strana
+            x = Math.random() * c.width;
+            y = -80;
+            speedX = (Math.random() - 0.5) * 2;
+            speedY = Math.random() * 2 + 1;
+        } else if (side === 1) { // Desna strana
+            x = c.width + 80;
+            y = Math.random() * c.height;
+            speedX = -Math.random() * 2 - 1;
+            speedY = (Math.random() - 0.5) * 2;
+        } else if (side === 2) { // Donja strana
+            x = Math.random() * c.width;
+            y = c.height + 80;
+            speedX = (Math.random() - 0.5) * 2;
+            speedY = -Math.random() * 2 - 1;
+        } else if (side === 3) { // Lijeva strana
+            x = -80;
+            y = Math.random() * c.height;
+            speedX = Math.random() * 2 + 1;
+            speedY = (Math.random() - 0.5) * 2;
         }
     }
 
@@ -277,17 +266,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return str;
     }
-    function playCollisionSound() {
+    function playCollisionSound(volume = 0.2) {
         // Ako postoji zvuk
         if (collisionSound) {
-            // Pusti zvuk sudara
+            // Postavi jačinu zvuka i pusti zvuk sudara
+            collisionSound.volume = volume;
             collisionSound.play();
         }
     }
 
-
     // Funkcija za detekciju kolizija
-    function checkCollisions() {
+    function collisionOfAsteriodAndRocket() {
         asteroids.forEach(function (asteroid) {
             if (gameOverElement.style.display == "none") {
                 // Detektiraj koliziju između rakete i asteroida
@@ -297,13 +286,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 var playerHeight = 90; // Visina rakete
 
                 // Dodatni uvjeti za smanjenje broja sudara
-                var collisionDistance = 10; // Prag za koliziju
-
+                var collisionDistance = 20; // Prag za koliziju
                 if (
                     player.x < asteroid.x + asteroidWidth - collisionDistance &&
                     player.x + playerWidth > asteroid.x + collisionDistance &&
                     player.y < asteroid.y + asteroidHeight - collisionDistance &&
                     player.y + playerHeight > asteroid.y + collisionDistance
+
                 ) {
                     collision = true;
                     updateTimer();
@@ -315,9 +304,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     gameOverElement.style.display = "block"; // Prikazi poruku "Game Over"
                     overlayElement.style.display = "block"; // Zatamni pozadinu
                     restartButton.style.display = "block";  // Dodaj gumb restart
-
-
-
                 }
             }
 
@@ -340,11 +326,10 @@ document.addEventListener("DOMContentLoaded", function () {
         animateStars();
         moveAsteroids();
         checkBounds();
-        checkCollisions(); // Dodano: provjeri kolizije
+        collisionOfAsteriodAndRocket();
         makeObjects();
         updateTimer();
         requestAnimationFrame(update);
-
     }
 
     // Pokreni ažuriranje
